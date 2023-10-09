@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  email-sender:
+    image: email-sender-app
+   
+    deploy:
+      replicas: 4  # Cambia el número de réplicas según tus necesidades
