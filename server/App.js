@@ -1,27 +1,43 @@
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 
-// Configuración del transporte SMTP
-const transporter = nodemailer.createTransport({
-    service: 'Gmail',  // Utiliza el servicio de Gmail
+const app = express();
+const port = 3000;
+
+app.use(bodyParser.json());
+app.use(cors());
+
+app.post('/send-email', (req, res) => {
+  const { from, to, subject, message } = req.body;
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
     auth: {
-        user: 'elenacastrodm76@gmail.com',  // Reemplaza con tu dirección de correo de Gmail
-        pass: 'Dm655125',  // Reemplaza con tu contraseña de aplicación
+      user: 'elenacastrodm76@gmail.com',
+      pass: 'icmf natz ddbj juas',
     },
+  });
+
+  const mailOptions = {
+    from: 'elenacastrodm76@gmail.com',
+    to,
+    subject,
+    text: message,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error al enviar el correo.' });
+    } else {
+      console.log('Correo enviado: ' + info.response);
+      res.json({ message: 'Correo enviado con éxito.' });
+    }
+  });
 });
 
-// Configuración del correo
-const mailOptions = {
-    from: 'Remitente Anónimo <tu_correo@gmail.com>',  // Reemplaza con el remitente deseado
-    to: 'correo_destinatario@gmail.com',  // Reemplaza con la dirección de correo del destinatario
-    subject: 'Asunto del correo',
-    text: 'Mensaje del correo.',
-};
-
-// Envía el correo
-transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-        console.error('Error al enviar el correo:', error);
-    } else {
-        console.log('Correo enviado con éxito:', info.response);
-    }
+app.listen(port, () => {
+  console.log(`Servidor escuchando en http://localhost:${port}`);
 });
